@@ -15,7 +15,7 @@ export default {
   enter(_c, go) {
     this.go = go;
     this.p = new CincoP();
-    // este puzzle se resuelve escuchando el chillido de dolor: se pide activar el sonido
+    // se pide activar el sonido para este puzzle
     this.pideSonido = audio.silenciado() || !audio.on();
     this.dolor = [-1e9, -1e9];
     this.listo = null;
@@ -38,7 +38,6 @@ export default {
     if (dedo < 0) return;
     if (!this.p.dedo(dedo, t)) return tunck(); // fuera de la ventana: todavia no corresponde
     this.dolor[dedo] = t;
-    audio.scream();
     if (this.p.completo()) { resolver('cinco_p'); audio.triumph(); this.listo = t; }
   },
 
@@ -52,14 +51,6 @@ export default {
     this.t = t;
     const color = (i) => (this.p.blanca(i, t) ? (t - this.p.unas[i] > VENTANA * 0.85 ? '#eab0b0' : BLANCO) : ROJO);
     mano(ctx, { unas: [color(0), color(1)], temblor: this.dolor.map((d) => (t - d < 600 ? (t - d) / 12 : 0)) });
-    this.dolor.forEach((d, i) => {
-      if (t - d < 800) {
-        ctx.font = 'bold 12px monospace';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#d02020';
-        ctx.fillText('AAAAY!!', MANO.dedos[i].x + 10, 54 - (t - d) / 40);
-      }
-    });
     if (this.p.ventana(t)) R(ctx, '#ffd23f', 0, 0, 320, 2); // la ventana de 7 segundos esta abierta
     if (this.listo !== null) {
       caption(ctx, 'Dolor a la extensión pasiva y llenado capilar enlentecido… esto no está bien.', 'Dr', 160);
@@ -73,7 +64,7 @@ export default {
       ctx.fillText('ESTE PUZZLE NECESITA SONIDO', 160, 66);
       ctx.font = '8px monospace';
       ctx.fillStyle = '#fff';
-      wrap(ctx, 'Activá el sonido: al extender los dedos vas a escuchar el chillido de dolor de la paciente.', 230).forEach((l, i) => ctx.fillText(l, 160, 82 + i * 10));
+      wrap(ctx, 'Activá el sonido para jugar este puzzle.', 230).forEach((l, i) => ctx.fillText(l, 160, 82 + i * 10));
       button(ctx, ACTIVAR, 'Activar sonido');
       button(ctx, SEGUIR, 'Seguir sin sonido');
     }
