@@ -7,7 +7,8 @@ export function imagen(nombre) {
     if (typeof Image === 'undefined') cache[nombre] = null;
     else {
       const i = new Image();
-      i.src = new URL(`../../assets/${nombre}`, import.meta.url).href;
+      // la version empaquetada (pagina publicada) trae las imagenes embebidas en TRAUMA_ASSETS
+      i.src = globalThis.TRAUMA_ASSETS?.[nombre] ?? new URL(`../../assets/${nombre}`, import.meta.url).href;
       cache[nombre] = i;
     }
   }
