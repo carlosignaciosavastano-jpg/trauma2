@@ -26,9 +26,9 @@ export default {
     this.t = t;
     R(ctx, '#0e2238', 0, 0, W, H);
     ctx.textAlign = 'center';
-    ctx.font = 'bold 7px monospace';
-    ctx.fillStyle = '#6fa8dc';
-    ctx.fillText('PLANO DEL HOSPITAL', 140, 9);
+    ctx.font = 'bold 9px monospace';
+    ctx.fillStyle = '#9fd0ff';
+    ctx.fillText('PLANO DEL HOSPITAL', 140, 8);
 
     // pasillos y salas con borde, para que se vean las paredes
     const piso = (r, col) => {
@@ -41,12 +41,15 @@ export default {
     // los bordes de las uniones se tapan con el piso para que no queden costuras
     PASILLOS.forEach((p) => R(ctx, '#e8e4d0', p[0] + 1, p[1] + 1, p[2] - 2, p[3] - 2));
 
-    ctx.font = '5px monospace';
-    ctx.fillStyle = '#223';
+    ctx.fillStyle = '#0e2238';
     for (const s of [...Object.values(SALAS), ...Object.values(SIN_SALIDA)]) {
       const [x, y, w, h] = s.r;
-      const partes = s.nombre.length * 3.2 > w - 2 ? s.nombre.split(' ') : [s.nombre];
-      partes.forEach((l, i) => ctx.fillText(l, x + w / 2, y + h / 2 + 2 + (i - (partes.length - 1) / 2) * 7));
+      // letra grande si entra, mas chica si no; el nombre se parte en palabras si hace falta
+      ctx.font = 'bold 7px monospace';
+      let partes = [s.nombre];
+      if (ctx.measureText(s.nombre).width > w - 4) partes = s.nombre.split(' ');
+      if (partes.some((l) => ctx.measureText(l).width > w - 4)) ctx.font = 'bold 6px monospace';
+      partes.forEach((l, i) => ctx.fillText(l, x + w / 2, y + h / 2 + 2.5 + (i - (partes.length - 1) / 2) * 8));
     }
     // inicio y meta
     const pulso = Math.floor(t / 400) % 2;
@@ -58,15 +61,15 @@ export default {
     for (const [x, y] of this.rec.huella) R(ctx, '#ffd23f', x - 1, y - 1, 2, 2);
 
     // mensajes
-    R(ctx, '#000', 0, 192, W, 8);
-    ctx.font = '7px monospace';
+    R(ctx, '#000', 0, 187, W, 13);
+    ctx.font = 'bold 8px monospace';
     ctx.fillStyle = '#ffd23f';
     ctx.fillText(
       t - this.fuera < 1600
-        ? 'Tocaste la pared: volvé a empezar desde la sala de médicos'
-        : 'Llevá el mouse de la SALA DE MÉDICOS a la GUARDIA sin tocar las paredes',
+        ? 'Tocaste la pared: volvé a empezar'
+        : 'Llevá el mouse de la SALA DE MÉDICOS a la GUARDIA',
       160,
-      199,
+      197,
     );
     if (t - this.fuera < 400) R(ctx, 'rgba(208,32,32,0.35)', 0, 0, W, H);
     if (this.llego !== null) {
