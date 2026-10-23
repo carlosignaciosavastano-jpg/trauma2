@@ -108,26 +108,19 @@ function reduccionEnCamilla(c, dt) {
   R(c, '#7fb2e0', 260, 79, 30, 7);
   // brazo estirado y un poco separado del cuerpo, tironeado desde la muñeca (como en la maniobra de referencia)
   c.strokeStyle = '#e8b890'; c.lineWidth = 4;
-  c.beginPath(); c.moveTo(228, 86); c.lineTo(283 + tira, 98); c.stroke();
-  el(c, '#e8b890', 284 + tira, 98, 3, 3);
+  c.beginPath(); c.moveTo(228, 86); c.lineTo(260 + tira, 94); c.stroke();
+  el(c, '#e8b890', 261 + tira, 94.5, 3, 3);
   // sabana en la axila: pasa por debajo del brazo y va hasta las manos del enfermero
   c.strokeStyle = '#fff'; c.lineWidth = 3;
   c.beginPath(); c.moveTo(228, 87); c.lineTo(190 - tira, 70); c.stroke();
   c.lineWidth = 1;
   enfermero(c, 176 - tira, 120, 0.62);
   el(c, '#e8b890', 190 - tira, 70, 3, 3); // sus manos sobre la sabana
-  // el Dr, del otro lado, agarrando la muñeca
-  c.save();
-  c.translate(291 + tira, 120);
-  c.scale(0.72, 0.72);
-  drawSprite(c, 'rubio', 0, 0);
-  c.restore();
-  c.strokeStyle = '#a0714f'; c.lineWidth = 2;
-  c.beginPath(); c.moveTo(289 + tira, 100); c.lineTo(284 + tira, 98); c.stroke();
-  c.lineWidth = 1;
+  // el Dr, de costado y echado hacia atras, con los brazos estirados tirando de la muñeca
+  drDeLado(c, 292 + tira, 120, { x: 262 + tira, y: 95 });
   // flechas azules de la traccion, una por cada eje (sabana y brazo), como en el esquema
   c.strokeStyle = '#2a5bd7'; c.fillStyle = '#2a5bd7'; c.lineWidth = 1.5;
-  for (const [x0, y0, x1, y1] of [[214, 76, 198, 69], [250, 91, 270, 96]]) {
+  for (const [x0, y0, x1, y1] of [[214, 76, 198, 69], [238, 90, 252, 93]]) {
     const a = Math.atan2(y1 - y0, x1 - x0);
     c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
     c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 - 5 * Math.cos(a - 0.5), y1 - 5 * Math.sin(a - 0.5)); c.lineTo(x1 - 5 * Math.cos(a + 0.5), y1 - 5 * Math.sin(a + 0.5)); c.closePath(); c.fill();
@@ -151,4 +144,27 @@ export function parpadeo(c, dt) {
     R(c, '#000', 0, 0, W, h);
     R(c, '#000', 0, H - h, W, h);
   }
+}
+
+// El Dr de perfil (mira a la izquierda), inclinado hacia atras; los dos brazos van hasta la muñeca `mano`.
+function drDeLado(c, x, y, mano) {
+  const piel = '#a0714f', ropa = '#7a3fb0', giro = 0.3;
+  R(c, 'rgba(0,0,0,0.25)', x - 14, y - 1, 28, 3);
+  R(c, ropa, x - 9, y - 30, 6, 28); R(c, '#1c1c1c', x - 10, y - 4, 9, 3); // pierna adelantada
+  R(c, ropa, x + 2, y - 30, 6, 28); R(c, '#1c1c1c', x + 1, y - 4, 9, 3); // pierna de atras
+  c.save();
+  c.translate(x, y - 28);
+  c.rotate(giro);
+  R(c, ropa, -7, -26, 14, 27); // torso
+  R(c, piel, -2, -30, 4, 5); // cuello
+  el(c, piel, 0, -35, 6, 7); // cabeza de perfil
+  R(c, piel, -9, -36, 3, 3); // nariz
+  R(c, '#1a110b', -5, -43, 11, 5); // pelo
+  R(c, '#1a110b', -2, -37, 2, 2); // ojo
+  c.restore();
+  const hombro = { x: x + 24 * Math.sin(giro), y: y - 28 - 24 * Math.cos(giro) };
+  c.strokeStyle = piel; c.lineWidth = 3;
+  for (const dy of [0, 3]) { c.beginPath(); c.moveTo(hombro.x, hombro.y + dy); c.lineTo(mano.x + 2, mano.y - 1 + dy / 2); c.stroke(); }
+  c.lineWidth = 1;
+  el(c, piel, mano.x + 1, mano.y, 3.5, 3.5); // punos cerrados sobre la muñeca
 }
