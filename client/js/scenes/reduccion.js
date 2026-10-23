@@ -94,6 +94,6 @@ export default {
     if (this.fase === 'listo') {
       caption(ctx, 'Reducción lograda.', 'Dr', 170);
       if (t - this.listo > 1600 && !this.fin) { this.fin = true; this.go('consulta', { nodo: 'gh_ok' }); }
-    } else caption(ctx, 'Llevá el húmero hasta la cavidad glenoidea (la marca roja).', null, 176);
+    }
   },
 };

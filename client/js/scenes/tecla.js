@@ -44,6 +44,6 @@ export default {
       R(ctx, '#150d08', cx + 2, cy - 18 + baja, 1, 2);
       caption(ctx, 'Signo de la tecla positivo: seudocharretera de la luxación acromio-clavicular.', 'Dr', 160);
       if (t - this.listo > 3500) this.salir();
-    } else caption(ctx, 'Examen físico: inspección y palpación del hombro.', null, 172);
+    }
   },
 };

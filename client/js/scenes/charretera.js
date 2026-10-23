@@ -54,6 +54,6 @@ export default {
     if (this.listo !== null) {
       caption(ctx, 'Claro!!!! El signo de la Charretera!!!!', 'Dr', 160);
       if (t - this.listo > 3000) this.salir();
-    } else caption(ctx, 'Examen físico: inspección y palpación del hombro.', null, 172);
+    }
   },
 };

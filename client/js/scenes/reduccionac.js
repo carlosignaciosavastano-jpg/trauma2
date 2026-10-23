@@ -46,6 +46,6 @@ export default {
     if (this.listo !== null) {
       caption(ctx, 'Reducción lograda.', 'Dr', 170);
       if (t - this.listo > 1600 && !this.fin) { this.fin = true; this.go(...terminarPuzzle()); }
-    } else caption(ctx, 'RX: luxación acromio-clavicular. La clavícula no está en su lugar.', null, 176);
+    }
   },
 };

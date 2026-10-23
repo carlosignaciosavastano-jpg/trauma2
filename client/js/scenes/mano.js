@@ -56,7 +56,7 @@ export default {
     if (this.listo !== null) {
       caption(ctx, 'Dolor a la extensión pasiva y llenado capilar enlentecido… esto no está bien.', 'Dr', 160);
       if (t - this.listo > 3500) this.salir();
-    } else caption(ctx, 'La paciente tiene la mano enyesada y los dedos hinchados.', null, 176);
+    }
     if (this.pideSonido) {
       R(ctx, 'rgba(0,0,0,0.78)', 0, 0, W, H);
       ctx.font = 'bold 9px monospace';
