@@ -123,7 +123,7 @@ export function rxDiagnostico(c) {
 const DEDOS = [
   { x: 118, flex: false }, { x: 144, flex: false }, { x: 170, flex: true }, { x: 196, flex: true },
 ];
-const TOPE = { recto: 38, flex: 62 };
+const TOPE = { recto: 38, flex: 38 }; // los cuatro dedos miden lo mismo; la flexion se marca con un pliegue
 const w = 20;
 
 // Rectangulos para los clicks. unas[0] = indice, unas[1] = medio; dedos igual.

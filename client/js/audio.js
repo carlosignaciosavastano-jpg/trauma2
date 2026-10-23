@@ -94,6 +94,12 @@ export const sip = () => { noise(0.3, 0.08, 1400); tone(200, 'sine', 0.06, 0.3, 
 export const door = () => { noise(0.35, 0.35, 350); tone(70, 'sine', 0.3, 0.35, 35); };
 export const babble = () => { for (let i = 0; i < 12; i++) setTimeout(() => tone(520 + Math.random() * 260, 'square', 0.03, 0.05), i * 85); };
 export const triumph = () => [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => tone(f, 'square', 0.07, 0.32), i * 120));
-export const scream = () => tone(700, 'sawtooth', 0.1, 0.5, 1900);
+// Chillido de dolor: tres voces que suben juntas y ruido, bien fuerte.
+export const scream = () => {
+  tone(900, 'sawtooth', 0.32, 0.8, 2400);
+  tone(1350, 'square', 0.2, 0.8, 3200);
+  tone(600, 'sawtooth', 0.22, 0.8, 1600);
+  noise(0.7, 0.22, 3500);
+};
 export const stinger = () => { tone(80, 'sawtooth', 0.15, 0.9, 40); noise(0.5, 0.15, 500); };
 export const ding = () => tone(1320, 'sine', 0.06, 0.25);

@@ -38,6 +38,7 @@ export default {
     if (dedo < 0) return;
     if (!this.p.dedo(dedo, t)) return tunck(); // fuera de la ventana: todavia no corresponde
     this.dolor[dedo] = t;
+    audio.scream();
     if (this.p.completo()) { resolver('cinco_p'); audio.triumph(); this.listo = t; }
   },
 

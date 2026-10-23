@@ -83,20 +83,55 @@ export function heroe(c, dt, { inset = false } = {}) {
   drawSprite(c, 'rubio', 0, 0);
   R(c, '#a0714f', -20, -36, 6, 4); R(c, '#a0714f', 14, -36, 6, 4); // punos en la cintura
   c.restore();
-  if (!inset) return;
-  R(c, '#000', 178, 14, 132, 104);
-  R(c, '#b9b4a2', 180, 16, 128, 100);
-  R(c, '#cfe0ee', 184, 20, 120, 92);
+  if (inset) reduccionEnCamilla(c, dt);
+}
+
+// Pantalla dentro de la pantalla: el paciente acostado en una camilla; el enfermero tira de una sabana
+// puesta en la axila (contratraccion) y el Dr tira de la muñeca hacia el otro lado (maniobra de Hipocrates).
+function reduccionEnCamilla(c, dt) {
+  const X = 158, Y = 10, w = 154, h = 114;
+  R(c, '#000', X - 2, Y - 2, w + 4, h + 4);
   c.save();
-  c.beginPath(); c.rect(184, 20, 120, 92); c.clip();
-  enfermero(c, 270, 112, 0.9);
-  c.translate(222, 112);
-  c.scale(0.95, 0.95);
+  c.beginPath(); c.rect(X, Y, w, h); c.clip();
+  R(c, '#cfe0ee', X, Y, w, h); // pared
+  R(c, '#9fb0a8', X, Y + 84, w, h - 84); // piso
+  const tira = Math.sin(dt / 160) * 1.5; // el tironeo: los dos tiran para su lado
+  // camilla
+  R(c, '#6c7a80', 198, 92, 94, 3);
+  R(c, '#cfd8dc', 196, 86, 98, 7);
+  R(c, '#555', 204, 95, 2, 12); R(c, '#555', 284, 95, 2, 12);
+  el(c, '#222', 205, 109, 4, 4); el(c, '#222', 285, 109, 4, 4);
+  // paciente acostado: cabeza a la izquierda, brazo estirado hacia el Dr
+  el(c, '#e8b890', 208, 80, 7, 6.5);
+  R(c, '#6a3a20', 202, 73, 13, 4);
+  R(c, '#7fb2e0', 216, 78, 44, 9); // camisolin
+  R(c, '#7fb2e0', 260, 79, 30, 7);
+  R(c, '#e8b890', 226 + tira, 86, 56, 4); // brazo luxado, tironeado por la muñeca
+  el(c, '#e8b890', 283 + tira, 88, 3, 3);
+  // sabana en la axila: pasa por debajo del brazo y va hasta las manos del enfermero
+  c.strokeStyle = '#fff'; c.lineWidth = 3;
+  c.beginPath(); c.moveTo(228, 88); c.quadraticCurveTo(210, 66, 190 - tira, 70); c.stroke();
+  c.lineWidth = 1;
+  enfermero(c, 176 - tira, 120, 0.62);
+  el(c, '#e8b890', 190 - tira, 70, 3, 3); // sus manos sobre la sabana
+  // el Dr, del otro lado, agarrando la muñeca
+  c.save();
+  c.translate(291 + tira, 120);
+  c.scale(0.72, 0.72);
   drawSprite(c, 'rubio', 0, 0);
   c.restore();
-  R(c, '#fff', 188, 24, 22, 6); // etiqueta de camara
+  c.strokeStyle = '#a0714f'; c.lineWidth = 2;
+  c.beginPath(); c.moveTo(288 + tira, 92); c.lineTo(284 + tira, 88); c.stroke();
+  c.lineWidth = 1;
+  // flechas de la traccion
   c.fillStyle = '#d02020';
-  c.fillRect(192, 26, 3, 3);
+  for (const [x, dir] of [[160, -1], [304, 1]]) {
+    c.beginPath(); c.moveTo(x + dir * 8, 60); c.lineTo(x, 55); c.lineTo(x, 65); c.closePath(); c.fill();
+  }
+  c.restore();
+  R(c, '#fff', X + 4, Y + 4, 22, 6); // etiqueta de camara
+  c.fillStyle = '#d02020';
+  c.fillRect(X + 8, Y + 6, 3, 3);
 }
 
 // Parpadeo: el Dr abre y cierra los ojos al despertar. `fondo` ya esta dibujado.
