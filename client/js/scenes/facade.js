@@ -3,7 +3,7 @@ import { SPRITES, drawSprite } from '../sprites.js';
 
 const IDS = Object.keys(SPRITES);
 const XS = [55, 125, 195, 265];
-const BASE = 176;
+const BASE = 168; // pies de los personajes; los nombres van debajo
 
 function drawFacade(c) {
   const sky = ['#4d7fc4', '#5a8bd0', '#6a9bd8', '#7aa9de', '#8bb6e4', '#9cc2ea', '#aecdee'];
@@ -57,7 +57,7 @@ export default {
   },
 
   hit(x, y) {
-    return IDS.findIndex((id, i) => Math.abs(x - XS[i]) < 16 && y > BASE - SPRITES[id].h && y < BASE + 2);
+    return IDS.findIndex((id, i) => Math.abs(x - XS[i]) < 16 && y > BASE - SPRITES[id].h && y < BASE + 14);
   },
 
   move(x, y) {
@@ -80,8 +80,19 @@ export default {
 
   draw(ctx) {
     ctx.drawImage(this.bg, 0, 0);
+    const name = (id) => this.names[id] || id;
+    ctx.textAlign = 'center';
     IDS.forEach((id, i) => {
       drawSprite(ctx, id, XS[i], BASE);
+
+      // nombre debajo del personaje, con contorno para que se lea sobre la vereda
+      const on = id === this.picked || (i === this.hover && !this.picked);
+      ctx.font = 'bold 9px monospace';
+      ctx.fillStyle = '#000';
+      for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) ctx.fillText(name(id), XS[i] + dx, BASE + 11 + dy);
+      ctx.fillStyle = on ? '#ffd23f' : '#fff';
+      ctx.fillText(name(id), XS[i], BASE + 11);
+
       if (i === this.hover && !this.picked) {
         const top = BASE - SPRITES[id].h;
         R(ctx, '#ffd23f', XS[i] - 14, BASE + 1, 28, 2);
@@ -93,12 +104,9 @@ export default {
 
     R(ctx, '#000', 0, 184, W, 16);
     ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    const name = (id) => (this.names[id] || id).toUpperCase();
     ctx.fillStyle = this.msg ? '#ff6a6a' : '#ffd23f';
     ctx.fillText(
-      this.msg ||
-        (this.picked ? `${name(this.picked)} ENTRA AL HOSPITAL...` : this.hover >= 0 ? name(IDS[this.hover]) : 'ELEGÍ A TU MÉDICO DE GUARDIA'),
+      this.msg || (this.picked ? `${name(this.picked).toUpperCase()} ENTRA AL HOSPITAL...` : 'ELEGÍ A TU MÉDICO DE GUARDIA'),
       160,
       196,
     );
