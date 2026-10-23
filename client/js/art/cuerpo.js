@@ -1,5 +1,5 @@
 // Examen fisico y radiografias de los casos de hombro y mano.
-import { R, W, H, mk } from '../pix.js';
+import { R, W, H } from '../pix.js';
 import { imagen } from './imagenes.js';
 
 const el = (c, col, x, y, rx, ry) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); c.fill(); };
@@ -23,61 +23,21 @@ export function torso(c) {
   if (i) { c.imageSmoothingEnabled = false; c.drawImage(i, 0, 0, W, i.height * ESC_TORSO); }
 }
 
-// ---- Radiografia de luxacion gleno-humeral (dibujada por codigo) ---------------------------------
-export const GLENOIDE = { x: 238, y: 92 }; // donde tiene que quedar el centro de la cabeza humeral
-export const HUMERO_INICIAL = { x: 206, y: 134 };
-export const HUMERO_LARGO = { dx: 24, dy: 78 }; // del centro de la cabeza al extremo del cuerpo
+// ---- Radiografia real de luxacion gleno-humeral (base + humero, recortados de la placa) -----------
+// Posiciones en pixeles del canvas; el humero esta hoy luxado (abajo y adentro de la glenoides).
+export const GH = {
+  base: { x: 52, y: 5, w: 178, h: 184 },
+  hum: { x: 157, y: 91, w: 78, h: 108 },
+  destino: { x: 0, y: -35 }, // cuanto hay que subir el humero para que la cabeza entre en la glenoides
+};
 
-const HUESO = 'rgba(226,218,200,0.78)';
-
-// Costillas, clavicula y escapula. fondo=false deja solo el hueso (pieza para superponer a la piel).
-export function rxGHBase(c, { fondo = true } = {}) {
-  if (fondo) {
-    R(c, '#08080a', 0, 0, W, H);
-    el(c, 'rgba(60,56,50,0.5)', 250, 110, 120, 90); // partes blandas
-  }
-  // costillas
-  c.strokeStyle = 'rgba(190,184,170,0.55)';
-  c.lineWidth = 6;
-  for (let k = 0; k < 5; k++) {
-    c.beginPath();
-    c.ellipse(-40, 40 + k * 38, 130 - k * 4, 60, 0, -0.5, 0.6);
-    c.stroke();
-  }
-  // clavicula
-  c.strokeStyle = HUESO;
-  c.lineWidth = 9;
-  c.lineCap = 'round';
-  c.beginPath(); c.moveTo(40, 30); c.quadraticCurveTo(130, 20, 214, 48); c.stroke();
-  // escapula: cuerpo, acromion, coracoides y glenoides
-  c.fillStyle = HUESO;
-  c.beginPath();
-  for (const [x, y] of [[118, 66], [160, 56], [206, 62], [212, 82], [206, 104], [190, 150], [150, 192], [118, 168], [108, 112]]) c.lineTo(x, y);
-  c.fill();
-  c.beginPath();
-  for (const [x, y] of [[196, 52], [252, 46], [266, 60], [216, 70]]) c.lineTo(x, y);
-  c.fill();
-  c.beginPath(); c.arc(194, 64, 9, 0, Math.PI * 2); c.fill();
-  c.strokeStyle = '#f2ecdc'; // borde de la cavidad glenoidea
-  c.lineWidth = 3;
-  c.beginPath(); c.arc(224, 92, 15, -1.3, 1.3); c.stroke();
-  c.lineWidth = 1;
-}
-
-// Humero: cabeza, cuello y cuerpo, con la cabeza centrada en (hx, hy).
-export function rxGHHumero(c, hx, hy) {
-  c.strokeStyle = HUESO;
-  c.lineWidth = 15;
-  c.beginPath(); c.moveTo(hx + 3, hy + 10); c.lineTo(hx + HUMERO_LARGO.dx, hy + HUMERO_LARGO.dy); c.stroke();
-  el(c, HUESO, hx, hy, 17, 16);
-  el(c, 'rgba(255,250,235,0.35)', hx - 4, hy - 4, 8, 7);
-  c.lineCap = 'butt';
-  c.lineWidth = 1;
-}
-
-export function rxGH(c, hx, hy) {
-  rxGHBase(c);
-  rxGHHumero(c, hx, hy);
+// off: desplazamiento del humero respecto de su lugar luxado.
+export function rxGH(c, off = { x: 0, y: 0 }) {
+  R(c, '#08080a', 0, 0, W, H);
+  const b = imagen('gh_base.png'), h = imagen('gh_hum.png');
+  c.imageSmoothingEnabled = false;
+  if (b) c.drawImage(b, GH.base.x, GH.base.y, GH.base.w, GH.base.h);
+  if (h) c.drawImage(h, GH.hum.x + off.x, GH.hum.y + off.y, GH.hum.w, GH.hum.h);
 }
 
 // ---- Radiografia de luxacion acromio-clavicular (foto: base + clavicula que se arrastra) ---------
@@ -115,8 +75,7 @@ export function rxDiagnostico(c) {
   const i = imagen('rx_ac.jpg');
   if (!i) return;
   c.imageSmoothingEnabled = false;
-  const s = W / i.width; // ancho completo, se recorta alto
-  c.drawImage(i, 0, 90 / s, i.width, 130 / s, 0, 0, W, 130);
+  c.drawImage(i, 0, 10, i.width, 150, 0, 0, W, 124); // clavicula y acromion, arriba de las opciones
 }
 
 // ---- Mano enyesada (puzzle 7 y pantalla de la paciente) ------------------------------------------
@@ -162,21 +121,10 @@ export function mano(c, { unas = ['#d96a6a', '#d96a6a'], temblor = [0, 0] } = {}
 // ---- Piezas de RX para acomodar sobre la piel del paciente ---------------------------------------
 // Cada pieza: { img(): lo que se dibuja, x, y: posicion correcta (esquina), hit: zona para agarrarla,
 //               ini: desplazamiento inicial }. Se dibujan en 1:1 sobre el torso.
-let gh = null;
-function piezasGH() {
-  if (!gh) {
-    const base = mk(), hum = mk();
-    rxGHBase(base.getContext('2d'), { fondo: false });
-    rxGHHumero(hum.getContext('2d'), HUMERO_INICIAL.x, HUMERO_INICIAL.y);
-    gh = { base, hum };
-  }
-  return gh;
-}
-
 export const SUPERPONER = {
   gh: () => [
-    { img: () => piezasGH().base, x: 0, y: 0, hit: { x: 0, y: 20, w: 270, h: 180 }, ini: { x: -38, y: 28 } },
-    { img: () => piezasGH().hum, x: 0, y: 0, hit: { x: HUMERO_INICIAL.x - 20, y: HUMERO_INICIAL.y - 18, w: 60, h: 112 }, ini: { x: 34, y: -26 } },
+    { img: () => imagen('gh_base.png'), x: GH.base.x, y: GH.base.y, w: GH.base.w, h: GH.base.h, hit: GH.base, ini: { x: -40, y: 22 } },
+    { img: () => imagen('gh_hum.png'), x: GH.hum.x, y: GH.hum.y, w: GH.hum.w, h: GH.hum.h, hit: GH.hum, ini: { x: 36, y: -46 } },
   ],
   ac: () => [
     { img: () => imagen('rx_ac_pieza.png'), x: 45, y: 10, w: 240, h: 210, hit: { x: 45, y: 10, w: 240, h: 210 }, ini: { x: -40, y: 30 } },
