@@ -3,17 +3,20 @@ import { mano, MANO } from '../art/cuerpo.js';
 import { CincoP, VENTANA } from '../game/cincop.js';
 import { activar, resolver } from '../game/state.js';
 import { terminarPuzzle } from '../game/caso.js';
-import { R } from '../pix.js';
-import { caption, inRect } from '../ui.js';
+import { R, W, H } from '../pix.js';
+import { button, caption, inRect, wrap } from '../ui.js';
 import { tunck } from '../hud.js';
 import * as audio from '../audio.js';
 
+const ACTIVAR = { x: 70, y: 112, w: 82, h: 18 }, SEGUIR = { x: 164, y: 112, w: 86, h: 18 };
 const ROJO = '#d96a6a', BLANCO = '#f4eeee';
 
 export default {
   enter(_c, go) {
     this.go = go;
     this.p = new CincoP();
+    // este puzzle se resuelve escuchando el chillido de dolor: se pide activar el sonido
+    this.pideSonido = audio.silenciado() || !audio.on();
     this.dolor = [-1e9, -1e9];
     this.listo = null;
     this.saliendo = false;
@@ -22,6 +25,11 @@ export default {
   },
 
   click(x, y) {
+    if (this.pideSonido) {
+      if (inRect(x, y, ACTIVAR)) { audio.start(); audio.silenciar(false); this.pideSonido = false; audio.ding(); }
+      else if (inRect(x, y, SEGUIR)) this.pideSonido = false;
+      return;
+    }
     if (this.listo !== null) return this.salir();
     const t = this.t;
     const una = MANO.unas.findIndex((r) => inRect(x, y, r));
@@ -57,5 +65,17 @@ export default {
       caption(ctx, 'Dolor a la extensión pasiva y llenado capilar enlentecido… esto no está bien.', 'Dr', 160);
       if (t - this.listo > 3500) this.salir();
     } else caption(ctx, 'La paciente tiene la mano enyesada y los dedos hinchados.', null, 176);
+    if (this.pideSonido) {
+      R(ctx, 'rgba(0,0,0,0.78)', 0, 0, W, H);
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillStyle = '#ffd23f';
+      ctx.fillText('ESTE PUZZLE NECESITA SONIDO', 160, 66);
+      ctx.font = '8px monospace';
+      ctx.fillStyle = '#fff';
+      wrap(ctx, 'Activá el sonido: al extender los dedos vas a escuchar el chillido de dolor de la paciente.', 230).forEach((l, i) => ctx.fillText(l, 160, 82 + i * 10));
+      button(ctx, ACTIVAR, 'Activar sonido');
+      button(ctx, SEGUIR, 'Seguir sin sonido');
+    }
   },
 };

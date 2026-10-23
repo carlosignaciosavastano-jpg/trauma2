@@ -1,7 +1,8 @@
 // Audio sintetizado, sin archivos: chiptune en La menor, musica de terror y efectos.
 // El navegador exige un gesto del usuario: start() se llama desde un click.
 // Antes de start() todos los efectos son no-ops.
-let ac, buzzGain, modo = 'chip';
+let ac, master, buzzGain, modo = 'chip';
+let mudo = false; // el silencio vale para todo el recorrido (tambien antes de start())
 
 const ARP = [220, 261.63, 329.63, 261.63, 220, 246.94, 311.13, 246.94];
 const BASS = [110, 110, 103.83, 110];
@@ -22,7 +23,7 @@ function tone(f, type, vol, dur, to, lp) {
     fl.frequency.value = lp;
     out = o.connect(fl);
   }
-  out.connect(g).connect(ac.destination);
+  out.connect(g).connect(master);
   o.start(t);
   o.stop(t + dur);
 }
@@ -36,7 +37,7 @@ function noise(dur, vol, lp) {
   fl.frequency.value = lp;
   g.gain.value = vol;
   s.buffer = buf;
-  s.connect(fl).connect(g).connect(ac.destination);
+  s.connect(fl).connect(g).connect(master);
   s.start();
 }
 
@@ -44,12 +45,15 @@ export function start() {
   if (ac) return;
   ac = new AudioContext();
   ac.resume();
+  master = ac.createGain();
+  master.gain.value = mudo ? 0 : 1;
+  master.connect(ac.destination);
   const o = ac.createOscillator();
   buzzGain = ac.createGain();
   o.type = 'sawtooth';
   o.frequency.value = 100;
   buzzGain.gain.value = 0;
-  o.connect(buzzGain).connect(ac.destination);
+  o.connect(buzzGain).connect(master);
   o.start();
   let i = 0;
   setInterval(() => {
@@ -65,6 +69,15 @@ export function start() {
 }
 
 export const on = () => !!ac;
+
+// Silencio general: un solo control para musica y efectos.
+export const silenciado = () => mudo;
+export function silenciar(v) {
+  mudo = v;
+  master?.gain.setTargetAtTime(v ? 0 : 1, ac.currentTime, 0.01);
+  try { localStorage.setItem('traumado2.mudo', v ? '1' : '0'); } catch { /* sin almacenamiento: no importa */ }
+}
+try { mudo = localStorage.getItem('traumado2.mudo') === '1'; } catch { /* idem */ }
 
 // Musica de fondo: 'chip' (normal), 'scare' (terror) o 'off'.
 export const musica = (m) => { modo = m; };

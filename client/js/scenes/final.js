@@ -7,7 +7,8 @@ import * as audio from '../audio.js';
 
 const DESPERTAR = 'Hay Dios!!!! Que pesadilla horrible… Tan hecho bolsa estoy que me quedé dormido?!!';
 
-// vuelve: 'agenda' (el caso se pierde) o el nodo del arbol donde el jugador elige de nuevo.
+// vuelve: 'agenda' (el caso se pierde), el nodo del arbol donde el jugador elige de nuevo,
+// o { escena, arg } para volver a una escena.
 export function demanda(go, texto, vuelve) {
   game.demandas++;
   go('slides', {
@@ -16,7 +17,9 @@ export function demanda(go, texto, vuelve) {
       { draw: (c, dt) => { consultorio.sala(c, dt); pers.parpadeo(c, dt); }, text: DESPERTAR, who: 'Dr', enter: () => audio.yawn() },
     ],
     fin: () => {
-      if (vuelve === 'agenda') { game.caso = null; go('consultorio', 'agenda'); } else go('consulta', { nodo: vuelve });
+      if (vuelve === 'agenda') { game.caso = null; go('consultorio', 'agenda'); }
+      else if (typeof vuelve === 'object') go(vuelve.escena, vuelve.arg); // vuelve a una escena (p. ej. la pregunta de la RX)
+      else go('consulta', { nodo: vuelve });
     },
   });
 }

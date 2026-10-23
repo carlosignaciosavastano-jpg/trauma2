@@ -40,6 +40,46 @@ export function rxGH(c, off = { x: 0, y: 0 }) {
   if (h) c.drawImage(h, GH.hum.x + off.x, GH.hum.y + off.y, GH.hum.w, GH.hum.h);
 }
 
+// ---- Dibujo del hombro para reducir la luxacion (aparece despues de interpretar la RX) -------------
+export const DIB = {
+  cabeza: { x: 168, y: 150, r: 22 }, // cabeza humeral luxada: abajo y adentro
+  largo: { dx: 34, dy: 92 },
+  destino: { x: 18, y: -56 }, // cuanto hay que subir el humero para que la cabeza entre en la cuenca
+  tol: 26, // generosa: la reduccion tiene que ser facil
+};
+
+export function dibujoGH(c, off = { x: 0, y: 0 }, t = 0) {
+  R(c, '#efe6d0', 0, 0, W, H);
+  c.lineJoin = 'round';
+  c.lineCap = 'round';
+  const hueso = (pts) => {
+    c.beginPath();
+    pts.forEach(([x, y], i) => (i ? c.lineTo(x, y) : c.moveTo(x, y)));
+    c.closePath();
+    c.fillStyle = '#f9f4e4';
+    c.fill();
+    c.strokeStyle = '#3b2f25';
+    c.lineWidth = 2;
+    c.stroke();
+  };
+  hueso([[58, 58], [110, 46], [168, 52], [174, 72], [168, 98], [150, 140], [112, 172], [80, 150], [64, 100]]); // escapula
+  hueso([[158, 42], [214, 36], [228, 50], [176, 64]]); // acromion
+  c.strokeStyle = '#3b2f25'; c.lineWidth = 12; c.beginPath(); c.moveTo(18, 30); c.lineTo(168, 44); c.stroke();
+  c.strokeStyle = '#f9f4e4'; c.lineWidth = 8; c.beginPath(); c.moveTo(18, 30); c.lineTo(168, 44); c.stroke();
+  // cavidad glenoidea: late para que se vea adonde va el humero
+  const p = 0.5 + 0.5 * Math.sin(t / 300);
+  c.strokeStyle = `rgba(200,60,40,${0.55 + 0.4 * p})`;
+  c.lineWidth = 5;
+  c.beginPath(); c.arc(DIB.cabeza.x + DIB.destino.x, DIB.cabeza.y + DIB.destino.y, DIB.cabeza.r + 5, Math.PI - 1.2, Math.PI + 1.2); c.stroke();
+  // humero
+  const hx = DIB.cabeza.x + off.x, hy = DIB.cabeza.y + off.y;
+  c.strokeStyle = '#3b2f25'; c.lineWidth = 26; c.beginPath(); c.moveTo(hx + 4, hy + 8); c.lineTo(hx + DIB.largo.dx, hy + DIB.largo.dy); c.stroke();
+  c.strokeStyle = '#f9f4e4'; c.lineWidth = 22; c.beginPath(); c.moveTo(hx + 4, hy + 8); c.lineTo(hx + DIB.largo.dx, hy + DIB.largo.dy); c.stroke();
+  c.beginPath(); c.arc(hx, hy, DIB.cabeza.r, 0, Math.PI * 2);
+  c.fillStyle = '#f9f4e4'; c.fill(); c.strokeStyle = '#3b2f25'; c.lineWidth = 2; c.stroke();
+  c.lineWidth = 1;
+}
+
 // ---- Radiografia de luxacion acromio-clavicular (foto: base + clavicula que se arrastra) ---------
 export const RX_AC = {
   S: H / 339,

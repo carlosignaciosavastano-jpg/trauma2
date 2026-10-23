@@ -33,7 +33,7 @@ export default {
   up() {
     if (!this.agarre) return;
     this.agarre = false;
-    if (!encaja(girar(PIVOTE, PUNTA, this.rot), DESTINO, 9)) return;
+    if (!encaja(girar(PIVOTE, PUNTA, this.rot), DESTINO, 16)) return;
     this.rot = ROT_OK;
     resolver('reduccion');
     audio.triumph();

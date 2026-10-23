@@ -19,7 +19,7 @@ export const ORDEN = ['armando', 'dolores', 'juanmarcos', 'leonel'];
 
 export const ESCENAS_PUZZLE = ['charretera', 'tecla', 'cincop', 'reduccionac'];
 
-const DEMANDA_RX = 'Usted interpretó mal la radiografía y trató a su paciente por una lesión que no tenía: ha sido DEMANDADO!!!';
+export const DEMANDA_RX = 'Usted interpretó mal la radiografía y trató a su paciente por una lesión que no tenía: ha sido DEMANDADO!!!';
 
 export const ARBOL = {
   armando: {
