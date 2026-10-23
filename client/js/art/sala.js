@@ -198,7 +198,6 @@ export function sombra(c) {
   c.ellipse(262, 100, 20, 24, 0, 0, Math.PI * 2);
   c.fill();
   R(c, '#0c0c12', 248, 118, 28, 20);
-  R(c, '#0c0c12', 240, 70, 44, 8); // rodete
 }
 
 export function globo(c, x, y, w, h) {
