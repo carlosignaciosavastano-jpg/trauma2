@@ -69,7 +69,7 @@ export const ARBOL = {
     ac_ok: { vista: 'rx_ac', puzzle: { id: 'reduccion', escena: 'reduccionac', luego: 'ac_fin' } },
     ac_fin: {
       heroe: 'cabestrillo',
-      victoria: '¡Diagnóstico correcto! Luxación acromio-clavicular: signo de la tecla positivo y RX confirmatoria. Cabestrillo, analgésicos y control por consultorio externo.',
+      victoria: 'EXCELENTE Dr, su diagnóstico de luxación Acromio Clavicular fue acertado, su paciente saldrá de esta sin problemas',
     },
     // luxacion glenohumeral reducida (puzzle 5)
     gh_ok: { heroe: true, victoria: 'Luxación gleno-humeral reducida.' },
