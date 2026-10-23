@@ -1,5 +1,6 @@
 import { R, W, H, mk } from '../pix.js';
 import { SPRITES, drawSprite } from '../sprites.js';
+import { player } from '../player.js';
 
 const IDS = Object.keys(SPRITES);
 const XS = [55, 125, 195, 265];
@@ -72,7 +73,7 @@ export default {
     fetch('/api/game/character', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: this.picked }),
+      body: JSON.stringify({ id: this.picked, name: player.name }),
     })
       .then((r) => { if (!r.ok) throw new Error(r.status); })
       .catch(() => { this.picked = null; this.msg = 'ERROR: EL SERVIDOR NO RESPONDE'; });
