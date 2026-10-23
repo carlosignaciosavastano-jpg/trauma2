@@ -5,7 +5,6 @@ import { imagen } from './imagenes.js';
 const el = (c, col, x, y, rx, ry) => { c.fillStyle = col; c.beginPath(); c.ellipse(x, y, rx, ry, 0, 0, Math.PI * 2); c.fill(); };
 
 // ---- Torso con el hombro desnudo (foto) ----------------------------------------------------------
-export const ESC_TORSO = W / 329; // la foto tiene 329 px de ancho
 
 // Puntos de la "U osea" (puzzle 4), en pixeles del canvas.
 export const PUNTOS_U = [
@@ -14,13 +13,20 @@ export const PUNTOS_U = [
   { nombre: 'articulación acromio-clavicular', x: 185, y: 68 },
   { nombre: 'acromion', x: 213, y: 77 },
 ];
+// Foto del hombro luxado (gleno-humeral): la U osea sigue la clavicula, el acromion y el hueco bajo el.
+export const PUNTOS_U_GH = [
+  { nombre: 'clavícula', x: 100, y: 30 },
+  { nombre: 'clavícula lateral', x: 140, y: 40 },
+  { nombre: 'acromion', x: 172, y: 50 },
+  { nombre: 'hueco bajo el acromion', x: 192, y: 78 },
+];
 // Tercio lateral de la clavicula (puzzle 6: signo de la tecla).
 export const TERCIO_LATERAL = { x: 142, y: 62, w: 52, h: 30 };
 
-export function torso(c) {
+export function torso(c, foto = 'torso.jpg') {
   R(c, '#d9a37d', 0, 0, W, H);
-  const i = imagen('torso.jpg');
-  if (i) { c.imageSmoothingEnabled = false; c.drawImage(i, 0, 0, W, i.height * ESC_TORSO); }
+  const i = imagen(foto);
+  if (i) { c.imageSmoothingEnabled = false; c.drawImage(i, 0, 0, W, (i.height * W) / i.width); }
 }
 
 // ---- Radiografia real de luxacion gleno-humeral (base + humero, recortados de la placa) -----------

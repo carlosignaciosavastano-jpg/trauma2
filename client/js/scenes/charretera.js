@@ -1,5 +1,5 @@
 // Puzzle 4 (el enigma de la depresion): tocar en orden los puntos de la "U osea" del hombro.
-import { torso, PUNTOS_U } from '../art/cuerpo.js';
+import { torso, PUNTOS_U_GH as PUNTOS_U } from '../art/cuerpo.js';
 import { R } from '../pix.js';
 import { activar, resolver } from '../game/state.js';
 import { terminarPuzzle } from '../game/caso.js';
@@ -40,7 +40,7 @@ export default {
 
   draw(ctx, t) {
     this.t = t;
-    torso(ctx);
+    torso(ctx, 'torso_gh.jpg');
     ctx.strokeStyle = '#ffd23f';
     ctx.lineWidth = 2;
     ctx.beginPath();
