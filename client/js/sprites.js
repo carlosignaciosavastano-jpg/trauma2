@@ -43,7 +43,7 @@ const handStrong = (c, x, y, o) => {
 // dedos ridiculamente largos
 const handLong = (c, x, y, o) => {
   R(c, o.skin, x - 2, y, 5, 3);
-  for (let i = 0; i < 5; i += 2) R(c, o.skin, x - 2 + i, y + 3, 1, 10);
+  for (let i = 0; i < 5; i += 2) R(c, o.skin, x - 2 + i, y + 3, 1, 7);
 };
 // manos y antebrazos muy pelludos
 const handHairy = (c, x, y, o) => {
