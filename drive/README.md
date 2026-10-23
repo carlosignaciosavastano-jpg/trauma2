@@ -7,11 +7,7 @@ El servidor manda cada nombre a una web app de Apps Script, que lo agrega a la h
 1. Abrí <https://script.new> y pegá el contenido de `Code.gs`.
 2. Configuración del proyecto > Propiedades del script > agregá `TOKEN` con una clave larga cualquiera.
 3. Implementar > Nueva implementación > Aplicación web. Ejecutar como: **Yo**. Acceso: **Cualquier persona**. Copiá la URL.
-4. Arrancá el servidor con esas dos variables:
-
-```
-JUGADORES_URL=<la URL> JUGADORES_TOKEN=<la clave> npm start
-```
+4. Copiá `.env.example` a `.env`, completá `JUGADORES_URL` (la URL) y `JUGADORES_TOKEN` (la misma clave del paso 2) y arrancá con `npm start`. `.env` está en `.gitignore`.
 
 Sin esas variables el juego funciona igual y no guarda nada.
 
