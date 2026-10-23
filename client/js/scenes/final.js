@@ -43,7 +43,7 @@ const FINALES = {
 };
 
 export function victoria(go, texto, heroe) {
-  const frames = heroe
+  const frames = heroe === true
     ? [
         { draw: (c, dt) => pers.heroe(c, dt), text: 'Usted hizo el diagnóstico de una luxación gleno-humeral, luego de chequear que el NERVIO CIRCUNFLEJO estaba intacto, realizó una maniobra de Hipócrates modificada', enter: () => audio.triumph() },
         { draw: (c, dt) => pers.heroe(c, dt, { inset: true }), text: 'Su paciente ahora no tiene dolor, y con la ayuda de un cabestrillo y analgésicos podrá volver por consultorio externo!!!' },
