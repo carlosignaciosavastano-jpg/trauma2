@@ -1,6 +1,7 @@
 import { mk, blur } from '../pix.js';
 import { drawRoom } from '../room.js';
 import * as audio from '../audio.js';
+import { player } from '../player.js';
 
 export default {
   enter(_ctx, go) {
@@ -14,6 +15,24 @@ export default {
     this.lit = true;
     this.burst = 0;
     this.next = 0;
+
+    // Campo de nombre + boton OK (HTML sobre el canvas). Sin validacion: el nombre es libre.
+    this.input = document.getElementById('name');
+    this.ok = document.getElementById('ok');
+    this.input.hidden = this.ok.hidden = false;
+    this.input.value = player.name;
+    this.input.onkeydown = (e) => e.key === 'Enter' && this.submit();
+    this.ok.onclick = () => this.submit();
+    this.input.focus();
+  },
+
+  // OK o Enter: guarda el nombre y pasa a la seleccion de personaje (el gesto tambien habilita el audio).
+  submit() {
+    player.name = this.input.value.trim();
+    this.input.hidden = this.ok.hidden = true;
+    audio.start();
+    audio.buzz(false);
+    this.go('facade');
   },
 
   draw(ctx, t) {
@@ -35,17 +54,15 @@ export default {
     ctx.fillStyle = '#d02020';
     ctx.fillText('TRAUMADO2', 160, 52);
 
-    if (Math.floor(t / 500) % 2) {
+    if (!audio.on() && Math.floor(t / 500) % 2) {
       ctx.font = '10px monospace';
       ctx.fillStyle = '#e0e0e0';
-      ctx.fillText(audio.on() ? 'CLICK PARA JUGAR' : 'CLICK PARA ACTIVAR EL SONIDO', 160, 192);
+      ctx.fillText('CLICK EN LA PANTALLA PARA ACTIVAR EL SONIDO', 160, 192);
     }
   },
 
-  // Primer click activa el audio (exigencia del navegador), el segundo avanza.
+  // Click en el fondo: solo activa el audio (el navegador lo exige). Para avanzar: OK o Enter.
   click() {
-    if (!audio.on()) return audio.start();
-    audio.buzz(false);
-    this.go('facade');
+    audio.start();
   },
 };
