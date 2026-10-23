@@ -3,7 +3,7 @@ import { game } from './state.js';
 import { ARBOL, ESTUDIOS, ORDEN, PACIENTES } from './pacientes.js';
 
 export function iniciarCaso(id) {
-  game.caso = { id, nodo: 'inicio', examen: false, dx: null, pedido: false, superpuesto: false };
+  game.caso = { id, nodo: 'inicio', examen: false, dx: null, pedido: false };
 }
 
 // "Dx por imagenes" solo sirve cuando el examen fisico ya dio un diagnostico presuntivo.
@@ -20,12 +20,10 @@ export function pedirEstudio(tipo) {
 // Que imagen se ve ('gh' | 'ac'), o null si todavia no se pidio ninguna.
 export const verImagenes = () => (game.caso?.pedido ? game.caso.dx : null);
 
-// A donde lleva "ver imagenes": primero acomodar la RX sobre la piel; despues la reduccion (gh)
-// o la eleccion del diagnostico (ac).
+// A donde lleva "ver imagenes": la reduccion (gh) o la eleccion del diagnostico (ac).
 export function destinoImagenes() {
-  const c = game.caso, v = verImagenes();
+  const v = verImagenes();
   if (!v) return null;
-  if (!c.superpuesto) return ['superponer', v];
   return v === 'gh' ? ['reduccion'] : ['consulta', { nodo: 'ac_dx' }];
 }
 

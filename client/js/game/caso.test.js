@@ -44,15 +44,13 @@ test('el caso termina cuando se atienden los dos pacientes de la prueba', () => 
   assert.equal(game.caso, null);
 });
 
-test('las imagenes llevan primero a superponer la RX y despues al puzzle del caso', () => {
+test('ver imagenes lleva a la reduccion (gh) o al diagnostico (ac)', () => {
   resetGame('rubio', 'x');
   iniciarCaso('armando');
   assert.equal(destinoImagenes(), null);
   game.caso.nodo = 'baranda';
   terminarPuzzle();
   pedirEstudio('RX');
-  assert.deepEqual(destinoImagenes(), ['superponer', 'gh']);
-  game.caso.superpuesto = true;
   assert.deepEqual(destinoImagenes(), ['reduccion']);
   game.caso.dx = 'ac';
   assert.deepEqual(destinoImagenes(), ['consulta', { nodo: 'ac_dx' }]);

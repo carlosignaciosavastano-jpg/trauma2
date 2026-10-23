@@ -9,7 +9,6 @@ export const AYUDAS = {
   mensajes: 'Creo que debería ver de qué se trata',
   laberinto: 'Si solo supiera cómo llegar a la guardia?!',
   charretera: 'Hummm… creo que esto se hacía con la U ósea palpable',
-  rx_piel: 'Ojalá tuviera ojos de RX',
   reduccion: 'Debería chequear que todo esté en su lugar',
   tecla: 'Humm… creo que sería un gran pianista',
   cinco_p: 'Humm… creo que debo revisar las 5 P',

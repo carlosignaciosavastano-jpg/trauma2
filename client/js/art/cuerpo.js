@@ -117,17 +117,3 @@ export function mano(c, { unas = ['#d96a6a', '#d96a6a'], temblor = [0, 0] } = {}
     R(c, una, d.x - 7 + sh, top, 14, 9);
   });
 }
-
-// ---- Piezas de RX para acomodar sobre la piel del paciente ---------------------------------------
-// Cada pieza: { img(): lo que se dibuja, x, y: posicion correcta (esquina), hit: zona para agarrarla,
-//               ini: desplazamiento inicial }. Se dibujan en 1:1 sobre el torso.
-export const SUPERPONER = {
-  gh: () => [
-    { img: () => imagen('gh_base.png'), x: GH.base.x, y: GH.base.y, w: GH.base.w, h: GH.base.h, hit: GH.base, ini: { x: -40, y: 22 } },
-    { img: () => imagen('gh_hum.png'), x: GH.hum.x, y: GH.hum.y, w: GH.hum.w, h: GH.hum.h, hit: GH.hum, ini: { x: 36, y: -46 } },
-  ],
-  ac: () => [
-    { img: () => imagen('rx_ac_pieza.png'), x: 45, y: 10, w: 240, h: 210, hit: { x: 45, y: 10, w: 240, h: 210 }, ini: { x: -40, y: 30 } },
-    { img: () => imagen('rx_clav_pieza.png'), x: 67, y: 22, w: 115, h: 67, hit: { x: 67, y: 22, w: 115, h: 67 }, ini: { x: 30, y: 62 } },
-  ],
-};

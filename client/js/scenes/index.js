@@ -13,7 +13,6 @@ import tecla from './tecla.js';
 import reduccion from './reduccion.js';
 import reduccionac from './reduccionac.js';
 import cincop from './mano.js';
-import superponer from './superponer.js';
 
 export const scenes = { title, facade, historia, pronto, slides, sala, cerca, laberinto, guardia,
-  consultorio, consulta, charretera, tecla, reduccion, reduccionac, cincop, superponer };
+  consultorio, consulta, charretera, tecla, reduccion, reduccionac, cincop };
