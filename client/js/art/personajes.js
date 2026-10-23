@@ -106,11 +106,13 @@ function reduccionEnCamilla(c, dt) {
   R(c, '#6a3a20', 202, 73, 13, 4);
   R(c, '#7fb2e0', 216, 78, 44, 9); // camisolin
   R(c, '#7fb2e0', 260, 79, 30, 7);
-  R(c, '#e8b890', 226 + tira, 86, 56, 4); // brazo luxado, tironeado por la muñeca
-  el(c, '#e8b890', 283 + tira, 88, 3, 3);
+  // brazo estirado y un poco separado del cuerpo, tironeado desde la muñeca (como en la maniobra de referencia)
+  c.strokeStyle = '#e8b890'; c.lineWidth = 4;
+  c.beginPath(); c.moveTo(228, 86); c.lineTo(283 + tira, 98); c.stroke();
+  el(c, '#e8b890', 284 + tira, 98, 3, 3);
   // sabana en la axila: pasa por debajo del brazo y va hasta las manos del enfermero
   c.strokeStyle = '#fff'; c.lineWidth = 3;
-  c.beginPath(); c.moveTo(228, 88); c.quadraticCurveTo(210, 66, 190 - tira, 70); c.stroke();
+  c.beginPath(); c.moveTo(228, 87); c.lineTo(190 - tira, 70); c.stroke();
   c.lineWidth = 1;
   enfermero(c, 176 - tira, 120, 0.62);
   el(c, '#e8b890', 190 - tira, 70, 3, 3); // sus manos sobre la sabana
@@ -121,13 +123,16 @@ function reduccionEnCamilla(c, dt) {
   drawSprite(c, 'rubio', 0, 0);
   c.restore();
   c.strokeStyle = '#a0714f'; c.lineWidth = 2;
-  c.beginPath(); c.moveTo(288 + tira, 92); c.lineTo(284 + tira, 88); c.stroke();
+  c.beginPath(); c.moveTo(289 + tira, 100); c.lineTo(284 + tira, 98); c.stroke();
   c.lineWidth = 1;
-  // flechas de la traccion
-  c.fillStyle = '#d02020';
-  for (const [x, dir] of [[160, -1], [304, 1]]) {
-    c.beginPath(); c.moveTo(x + dir * 8, 60); c.lineTo(x, 55); c.lineTo(x, 65); c.closePath(); c.fill();
+  // flechas azules de la traccion, una por cada eje (sabana y brazo), como en el esquema
+  c.strokeStyle = '#2a5bd7'; c.fillStyle = '#2a5bd7'; c.lineWidth = 1.5;
+  for (const [x0, y0, x1, y1] of [[214, 76, 198, 69], [250, 91, 270, 96]]) {
+    const a = Math.atan2(y1 - y0, x1 - x0);
+    c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+    c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 - 5 * Math.cos(a - 0.5), y1 - 5 * Math.sin(a - 0.5)); c.lineTo(x1 - 5 * Math.cos(a + 0.5), y1 - 5 * Math.sin(a + 0.5)); c.closePath(); c.fill();
   }
+  c.lineWidth = 1;
   c.restore();
   R(c, '#fff', X + 4, Y + 4, 22, 6); // etiqueta de camara
   c.fillStyle = '#d02020';
