@@ -49,7 +49,7 @@ export default {
       R(ctx, '#150d08', cx - 3, cy - 30 + baja, 1, 2);
       R(ctx, '#150d08', cx + 2, cy - 18 + baja, 1, 2);
       if (ms >= PULSOS * CADENCIA) caption(ctx, 'Signo de la tecla positivo: seudocharretera de la luxación acromio-clavicular.', 'Dr', 160);
-      if (ms > PULSOS * CADENCIA + 2500) this.salir();
+      if (ms > PULSOS * CADENCIA + 4500) this.salir();
     }
   },
 };
