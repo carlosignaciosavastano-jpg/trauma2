@@ -58,7 +58,7 @@ const eyes = (c, hx, hw, y, col) => {
 };
 
 // Rasgos exagerados de caricatura: frente baja, ceja pesada, mandibula y orejas grandes.
-function faceMonono(c, cx, t, hw, hh, o) {
+function faceRubio(c, cx, t, hw, hh, o) {
   const hx = cx - Math.round(hw / 2);
   R(c, o.skin, hx - 1, t + hh * 0.5, hw + 2, hh * 0.5);
   R(c, o.skin, hx - 3, t + 5, 2, 5);
@@ -116,7 +116,7 @@ const V = '#7a3fb0', B = '#2f5fb0', RED = '#c0302e';
 
 // Alturas distintas a proposito: Kline es el mas alto.
 export const SPRITES = {
-  monono: { h: 66, tw: 28, nw: 7, skin: '#a0714f', top: V, pants: V, hair: '#1a110b', coat: false, face: faceMonono, hand: handHairy },
+  rubio: { h: 66, tw: 28, nw: 7, skin: '#a0714f', top: V, pants: V, hair: '#1a110b', coat: false, face: faceRubio, hand: handHairy },
   lince: { h: 72, tw: 20, skin: '#f1c9a5', top: B, pants: B, hair: '#3a2616', coat: true, face: faceLince, hand: handStrong },
   kline: { h: 84, tw: 22, skin: '#f4d9c2', top: '#8fb0d0', pants: '#3a3a44', hair: '#e6cd6a', coat: true, face: faceKline, hand: handLong },
   hart: { h: 68, tw: 19, skin: '#f6dcc6', top: RED, pants: RED, hair: '#b8401f', coat: true, face: faceHart, hand: handBasic },

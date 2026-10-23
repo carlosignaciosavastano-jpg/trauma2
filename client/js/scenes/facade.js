@@ -1,12 +1,14 @@
-import { R, W, H, mk } from '../pix.js';
+import { R, W, mk } from '../pix.js';
 import { SPRITES, drawSprite } from '../sprites.js';
 import { player } from '../player.js';
+import { NAMES } from '../game/characters.js';
+import { resetGame } from '../game/state.js';
 
 const IDS = Object.keys(SPRITES);
 const XS = [55, 125, 195, 265];
 const BASE = 168; // pies de los personajes; los nombres van debajo
 
-function drawFacade(c) {
+export function drawFacade(c) {
   const sky = ['#4d7fc4', '#5a8bd0', '#6a9bd8', '#7aa9de', '#8bb6e4', '#9cc2ea', '#aecdee'];
   R(c, sky[6], 0, 0, W, 152);
   sky.forEach((col, i) => R(c, col, 0, i * 14, W, 14));
@@ -42,19 +44,13 @@ function drawFacade(c) {
   for (let x = 0; x < W; x += 40) R(c, '#767468', x, 152, 1, 16);
 }
 
+
 export default {
   enter(_ctx, go) {
     this.go = go;
     this.bg = mk();
     drawFacade(this.bg.getContext('2d'));
     this.hover = -1;
-    this.picked = null;
-    this.msg = '';
-    this.names = {};
-    fetch('/api/game/characters')
-      .then((r) => r.json())
-      .then((list) => list.forEach((p) => { this.names[p.id] = p.name; }))
-      .catch(() => {});
   },
 
   hit(x, y) {
@@ -65,36 +61,36 @@ export default {
     this.hover = this.hit(x, y);
   },
 
-  // Elegir personaje no cambia el curso del juego: el servidor solo guarda quien es.
+  // Elegir personaje no cambia el curso del juego: arranca la historia general y despues la back story.
   click(x, y) {
     const i = this.hit(x, y);
-    if (this.picked || i < 0) return;
-    this.picked = IDS[i];
+    if (i < 0) return;
+    const id = IDS[i];
+    resetGame(id, player.name);
+    // El servidor solo guarda quien es el jugador; si no hay servidor (pagina publicada) se ignora.
     fetch('/api/game/character', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ id: this.picked, name: player.name }),
-    })
-      .then((r) => { if (!r.ok) throw new Error(r.status); })
-      .catch(() => { this.picked = null; this.msg = 'ERROR: EL SERVIDOR NO RESPONDE'; });
+      body: JSON.stringify({ id, name: player.name }),
+    }).catch(() => {});
+    this.go('historia');
   },
 
   draw(ctx) {
     ctx.drawImage(this.bg, 0, 0);
-    const name = (id) => this.names[id] || id;
     ctx.textAlign = 'center';
     IDS.forEach((id, i) => {
       drawSprite(ctx, id, XS[i], BASE);
 
       // nombre debajo del personaje, con contorno para que se lea sobre la vereda
-      const on = id === this.picked || (i === this.hover && !this.picked);
+      const on = i === this.hover;
       ctx.font = 'bold 9px monospace';
       ctx.fillStyle = '#000';
-      for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) ctx.fillText(name(id), XS[i] + dx, BASE + 11 + dy);
+      for (const [dx, dy] of [[-1, 0], [1, 0], [0, -1], [0, 1]]) ctx.fillText(NAMES[id], XS[i] + dx, BASE + 11 + dy);
       ctx.fillStyle = on ? '#ffd23f' : '#fff';
-      ctx.fillText(name(id), XS[i], BASE + 11);
+      ctx.fillText(NAMES[id], XS[i], BASE + 11);
 
-      if (i === this.hover && !this.picked) {
+      if (on) {
         const top = BASE - SPRITES[id].h;
         R(ctx, '#ffd23f', XS[i] - 14, BASE + 1, 28, 2);
         R(ctx, '#ffd23f', XS[i] - 3, top - 8, 7, 1);
@@ -105,11 +101,7 @@ export default {
 
     R(ctx, '#000', 0, 184, W, 16);
     ctx.font = '10px monospace';
-    ctx.fillStyle = this.msg ? '#ff6a6a' : '#ffd23f';
-    ctx.fillText(
-      this.msg || (this.picked ? `${name(this.picked).toUpperCase()} ENTRA AL HOSPITAL...` : 'ELEGÍ A TU MÉDICO DE GUARDIA'),
-      160,
-      196,
-    );
+    ctx.fillStyle = '#ffd23f';
+    ctx.fillText('ELEGÍ A TU MÉDICO DE GUARDIA', 160, 196);
   },
 };
