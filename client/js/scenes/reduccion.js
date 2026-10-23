@@ -5,18 +5,17 @@ import { R, W } from '../pix.js';
 import { activar, resolver } from '../game/state.js';
 import { DEMANDA_RX } from '../game/pacientes.js';
 import { encaja, distSegmento } from '../game/pieza.js';
-import { button, caption, inRect, options } from '../ui.js';
+import { caption, inRect, options } from '../ui.js';
 import { demanda } from './final.js';
 import * as audio from '../audio.js';
 
 const VER_MS = 4000, FADE_MS = 1200;
-const SI = { x: 232, y: 176, w: 28, h: 16 }, NO = { x: 266, y: 176, w: 28, h: 16 };
 const DIAGNOSTICOS = ['Luxación acromio-clavicular', 'Luxación gleno-humeral', 'Nada'];
 
 export default {
   enter(_c, go, arg = {}) {
     this.go = go;
-    this.fase = arg.pregunta ? 'pregunta' : 'ver'; // despues de la demanda vuelve directo a la pregunta
+    this.fase = arg.opciones ? 'opciones' : 'ver'; // despues de la demanda vuelve directo a las opciones
     this.t0 = null;
     this.fade0 = null;
     this.off = { x: 0, y: 0 };
@@ -30,13 +29,10 @@ export default {
 
   fundido() { this.fase = 'fade'; this.fade0 = null; },
 
-  mal() { demanda(this.go, DEMANDA_RX, { escena: 'reduccion', arg: { pregunta: true } }); },
+  mal() { demanda(this.go, DEMANDA_RX, { escena: 'reduccion', arg: { opciones: true } }); },
 
   click(x, y) {
-    if (this.fase === 'pregunta') {
-      if (inRect(x, y, SI)) this.fundido();
-      else if (inRect(x, y, NO)) this.fase = 'opciones';
-    } else if (this.fase === 'opciones') {
+    if (this.fase === 'opciones') {
       const i = this.rects.findIndex((r) => inRect(x, y, r));
       if (i === 1) this.fundido(); else if (i >= 0) this.mal();
     }
@@ -68,16 +64,15 @@ export default {
   draw(ctx, t) {
     this.t = t;
     this.t0 ??= t;
-    if (this.fase === 'ver' || this.fase === 'pregunta' || this.fase === 'opciones') {
+    if (this.fase === 'ver' || this.fase === 'opciones') {
       rxGH(ctx);
       if (this.fase === 'ver') {
         caption(ctx, 'RX del paciente.', null, 176);
-        if (t - this.t0 >= VER_MS) this.fase = 'pregunta';
-      } else if (this.fase === 'pregunta') {
-        caption(ctx, 'Tienes idea de lo que tenemos aquí?', 'Dr', 170);
-        button(ctx, SI, 'SÍ');
-        button(ctx, NO, 'NO');
-      } else this.rects = options(ctx, DIAGNOSTICOS);
+        if (t - this.t0 >= VER_MS) this.fase = 'opciones';
+      } else {
+        caption(ctx, 'Tienes idea de lo que tenemos aquí?', 'Dr', 116);
+        this.rects = options(ctx, DIAGNOSTICOS);
+      }
       return;
     }
     if (this.fase === 'fade') {

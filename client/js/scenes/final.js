@@ -38,6 +38,11 @@ export function siguiente(go) {
   });
 }
 
+const FINALES = {
+  yeso: 'Yeso abierto en toda su longitud: los dedos recuperan su color y su tamaño normal.',
+  cabestrillo: 'Su paciente se va con el brazo en cabestrillo, analgésicos y control por consultorio externo.',
+};
+
 export function victoria(go, texto, heroe) {
   const frames = heroe
     ? [
@@ -45,5 +50,6 @@ export function victoria(go, texto, heroe) {
         { draw: (c, dt) => pers.heroe(c, dt, { inset: true }), text: 'Su paciente ahora no tiene dolor, y con la ayuda de un cabestrillo y analgésicos podrá volver por consultorio externo!!!' },
       ]
     : [{ draw: (c, dt) => pers.heroe(c, dt), text: texto, enter: () => audio.triumph() }];
+  if (typeof heroe === 'string') frames.push({ draw: (c, dt) => pers.heroe(c, dt, { inset: heroe }), text: FINALES[heroe] });
   go('slides', { frames, fin: () => { atender(); siguiente(go); } });
 }

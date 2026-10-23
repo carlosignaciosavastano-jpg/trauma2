@@ -68,6 +68,7 @@ export const ARBOL = {
     // diagnostico correcto: ahora a reducir la luxacion (puzzle con la clavicula)
     ac_ok: { vista: 'rx_ac', puzzle: { id: 'reduccion', escena: 'reduccionac', luego: 'ac_fin' } },
     ac_fin: {
+      heroe: 'cabestrillo',
       victoria: '¡Diagnóstico correcto! Luxación acromio-clavicular: signo de la tecla positivo y RX confirmatoria. Cabestrillo, analgésicos y control por consultorio externo.',
     },
     // luxacion glenohumeral reducida (puzzle 5)
@@ -107,7 +108,7 @@ export const ARBOL = {
         ['Debe tener una fractura de los dedos también, debería pedirle una RX', 'sc_mal'],
       ],
     },
-    sc_ok: { victoria: '¡Diagnóstico correcto! Usted reconoció el síndrome compartimental y abrió el yeso a tiempo: la mano de la paciente está salvada.' },
+    sc_ok: { heroe: 'yeso', victoria: '¡Diagnóstico correcto! Usted reconoció el síndrome compartimental y abrió el yeso a tiempo: la mano de la paciente está salvada.' },
     sc_mal: {
       vista: 'mano',
       demanda: {

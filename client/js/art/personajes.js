@@ -83,18 +83,70 @@ export function heroe(c, dt, { inset = false } = {}) {
   drawSprite(c, 'rubio', 0, 0);
   R(c, '#a0714f', -20, -36, 6, 4); R(c, '#a0714f', 14, -36, 6, 4); // punos en la cintura
   c.restore();
-  if (inset) reduccionEnCamilla(c, dt);
+  if (inset === 'yeso') yesoAbierto(c);
+  else if (inset === 'cabestrillo') pacienteConCabestrillo(c);
+  else if (inset) reduccionEnCamilla(c, dt);
 }
 
 // Pantalla dentro de la pantalla: el paciente acostado en una camilla; el enfermero tira de una sabana
 // puesta en la axila (contratraccion) y el Dr tira de la muñeca hacia el otro lado (maniobra de Hipocrates).
-function reduccionEnCamilla(c, dt) {
+function marco(c, dibujar) {
   const X = 158, Y = 10, w = 154, h = 114;
   R(c, '#000', X - 2, Y - 2, w + 4, h + 4);
   c.save();
   c.beginPath(); c.rect(X, Y, w, h); c.clip();
   R(c, '#cfe0ee', X, Y, w, h); // pared
   R(c, '#9fb0a8', X, Y + 84, w, h - 84); // piso
+  dibujar();
+  c.restore();
+}
+
+// Antebrazo con el yeso cortado a lo largo (las dos valvas separadas) y la mano de color y tamaño normales.
+function yesoAbierto(c) {
+  marco(c, () => {
+    const piel = '#e8b890', yeso = '#ece7da', borde = '#b9b2a0';
+    R(c, '#8a6a4a', 166, 96, 138, 4); // mesa
+    R(c, piel, 176, 56, 70, 22); // antebrazo
+    R(c, '#f6f2ea', 176, 52, 66, 4); R(c, '#f6f2ea', 176, 78, 66, 4); // algodon
+    R(c, yeso, 174, 40, 68, 12); R(c, borde, 174, 51, 68, 1); // valva superior
+    R(c, yeso, 174, 82, 68, 12); R(c, borde, 174, 82, 68, 1); // valva inferior
+    R(c, piel, 242, 54, 26, 26); // palma
+    R(c, piel, 250, 46, 5, 10); R(c, '#f2c9ae', 250, 46, 5, 2); // pulgar
+    const largos = [22, 26, 28, 25, 19];
+    largos.forEach((l, i) => { R(c, piel, 268, 54 + i * 5, l, 4); R(c, '#f2c9ae', 268 + l - 3, 54 + i * 5, 3, 4); });
+    R(c, '#c8a07c', 242, 54, 1, 26); // pliegue de la muñeca
+    // sierra apoyada a un lado
+    R(c, '#cfd4d8', 178, 30, 52, 4); for (let x = 178; x < 230; x += 3) R(c, '#9aa0a5', x, 34, 2, 2);
+    R(c, '#7a3fb0', 226, 27, 14, 9);
+  });
+  camara(c);
+}
+
+// Paciente de frente con el brazo en cabestrillo (pañuelo azul colgado del cuello).
+function pacienteConCabestrillo(c) {
+  marco(c, () => {
+    const piel = '#e8b890', bata = '#9ec3dc', azul = '#2a5d9f';
+    R(c, bata, 214, 54, 44, 52); // torso
+    R(c, bata, 208, 56, 8, 38); R(c, piel, 208, 92, 8, 8); // brazo sano
+    R(c, '#4a5560', 218, 106, 15, 16); R(c, '#4a5560', 239, 106, 15, 16); // piernas
+    R(c, piel, 232, 46, 8, 8);
+    el(c, piel, 236, 36, 11, 12); // cabeza
+    R(c, '#3a2a20', 225, 22, 22, 7);
+    R(c, '#150d08', 231, 35, 2, 2); R(c, '#150d08', 240, 35, 2, 2);
+    R(c, bata, 252, 56, 8, 22); // brazo lesionado
+    R(c, bata, 224, 78, 36, 8); // antebrazo cruzado
+    R(c, piel, 216, 79, 9, 7); // mano
+    c.fillStyle = azul; c.beginPath(); c.moveTo(220, 76); c.lineTo(262, 76); c.lineTo(262, 90); c.lineTo(250, 98); c.lineTo(228, 98); c.lineTo(220, 90); c.closePath(); c.fill();
+    c.strokeStyle = azul; c.lineWidth = 3;
+    c.beginPath(); c.moveTo(262, 76); c.lineTo(246, 50); c.lineTo(230, 50); c.lineTo(220, 76); c.stroke();
+    c.lineWidth = 1;
+    R(c, piel, 216, 79, 9, 6);
+  });
+  camara(c);
+}
+
+function reduccionEnCamilla(c, dt) {
+  marco(c, () => {
   const tira = Math.sin(dt / 160) * 1.5; // el tironeo: los dos tiran para su lado
   // camilla
   R(c, '#6c7a80', 198, 92, 94, 3);
@@ -126,10 +178,13 @@ function reduccionEnCamilla(c, dt) {
     c.beginPath(); c.moveTo(x1, y1); c.lineTo(x1 - 5 * Math.cos(a - 0.5), y1 - 5 * Math.sin(a - 0.5)); c.lineTo(x1 - 5 * Math.cos(a + 0.5), y1 - 5 * Math.sin(a + 0.5)); c.closePath(); c.fill();
   }
   c.lineWidth = 1;
-  c.restore();
-  R(c, '#fff', X + 4, Y + 4, 22, 6); // etiqueta de camara
-  c.fillStyle = '#d02020';
-  c.fillRect(X + 8, Y + 6, 3, 3);
+  });
+  camara(c);
+}
+
+function camara(c) {
+  R(c, '#fff', 162, 14, 22, 6);
+  R(c, '#d02020', 166, 16, 3, 3);
 }
 
 // Parpadeo: el Dr abre y cierra los ojos al despertar. `fondo` ya esta dibujado.
